@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import {HeaderComponent} from './comonents/header/header.component';
 import {FooterComponent} from './comonents/footer/footer.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {MatCardModule} from '@angular/material/card';
 
 
 const COMPONENTS = [
