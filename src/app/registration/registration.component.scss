@@ -1,0 +1,28 @@
+:host {
+  width: 100%;
+  height: 100%;
+}
+.registration-form-wrapper{
+  padding: 3rem;
+  .registration-card{
+    border-radius: 8px;
+    .registration-form {
+      width: 70%;
+      margin-bottom: 3rem;
+      .register-button{
+        background: #4E158C;
+        color: white;
+      }
+      .register-button[disabled] {
+        background: grey;
+        color: white;
+      }
+      .icon--correct{
+        color: darkseagreen;
+      }
+      .icon--wrong{
+        color: indianred;
+      }
+    }
+  }
+}
