@@ -3,6 +3,7 @@
     <div fxLayoutAlign="center start">
       <h1>Sign Up</h1>
     </div>
+    <mat-progress-bar mode="indeterminate" class="progress-bar" *ngIf="loading"></mat-progress-bar>
     <div class="registration-form" fxLayout="column">
       <form #formDirective="ngForm" (ngSubmit)="onSubmit(formDirective)" [formGroup]="registerForm" fxLayout="column"
             fxLayoutGap="1rem">
@@ -52,6 +53,7 @@
         <mat-error *ngIf="dataError">{{dataError}}</mat-error>
       </form>
     </div>
+
   </mat-card>
 </div>
 
