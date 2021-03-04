@@ -32,7 +32,10 @@ export class RegistrationComponent implements OnInit {
               private userService: UserService) {
   }
 
-  // convenience getter for easy access to form fields
+  /**
+   * @summary gets the form controls of a given form
+   * @returns list of controls in form group
+   */
   get f(): { [p: string]: AbstractControl } {
     return this.registerForm.controls;
   }
@@ -41,26 +44,38 @@ export class RegistrationComponent implements OnInit {
     this.initializeForm();
   }
 
+  /**
+   * @summary initializes and custom validators are added to the form group
+   */
   initializeForm(): void {
     this.registerForm = this.formBuilder.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', Validators.required],
       password: ['', [Validators.required, Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d]{8,}$')]]
-    }, { validators: this.checkPasswordValidity });
+    }, {validators: this.checkPasswordValidity});
   }
 
+  /**
+   * @summary checks the validity of form group if password matches firstName or LastName
+   * @param registerFormGroup - formGroup element
+   * @returns custom validator if condition matches
+   */
   checkPasswordValidity(registerFormGroup: FormGroup): { [key: string]: boolean } {
     const validFirstName = registerFormGroup && registerFormGroup.get('firstName').valid && registerFormGroup.get('firstName').value;
     const validLastName = registerFormGroup && registerFormGroup.get('lastName').valid && registerFormGroup.get('lastName').value;
     const password = registerFormGroup && registerFormGroup.get('password').value;
     if ((validFirstName && password.toLowerCase().indexOf(validFirstName.toLowerCase()) > -1 ||
-        validLastName && password.toLowerCase().indexOf(validLastName.toLowerCase()) > -1)) {
-      return { isMatching: true };
+      validLastName && password.toLowerCase().indexOf(validLastName.toLowerCase()) > -1)) {
+      return {isMatching: true};
     }
     return null;
   }
 
+  /**
+   * @summary Invokes register method to sign up the user
+   * @param formDirective - This is responsible for binding form group to DOM
+   */
   onSubmit(formDirective: FormGroupDirective): void {
     this.submitted = true;
     this.loading = true;
@@ -81,6 +96,11 @@ export class RegistrationComponent implements OnInit {
       });
   }
 
+  /**
+   * @summary returns error message based on conditions
+   * @param registerFormControl - takes form control as input
+   * @returns error text that has to be displayed
+   */
   getErrorMessage(registerFormControl): string {
     if (registerFormControl.hasError('required')) {
       return 'You must enter a value';
