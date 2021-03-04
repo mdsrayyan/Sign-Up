@@ -30,14 +30,14 @@
           <mat-form-field appearance="outline">
             <mat-label>Password</mat-label>
             <input [type]="hide ? 'password' : 'text'" formControlName="password" matInput
-                   placeholder="Please enter Password">
+                   placeholder="Please enter Password" [errorStateMatcher]="matcher">
             <button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide" mat-icon-button
                     matPrefix type="button">
               <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
             <mat-icon *ngIf="f.password.valid" class="icon--correct" matSuffix>check_circle</mat-icon>
             <mat-icon *ngIf="f.password.touched && f.password.invalid" class="icon--wrong" matSuffix>cancel</mat-icon>
-            <mat-error *ngIf="f.password.invalid"><span [innerHTML]="getErrorMessage(f.password)"></span></mat-error>
+            <mat-error *ngIf="f.password.errors || registerForm?.hasError('isMatching')"><span [innerHTML]="getErrorMessage(f.password)"></span></mat-error>
           </mat-form-field>
         </div>
 
