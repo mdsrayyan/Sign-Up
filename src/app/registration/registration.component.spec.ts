@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { RegistrationComponent } from './registration.component';
+import {RegistrationComponent} from './registration.component';
 import {FormGroupDirective, ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Router} from '@angular/router';
@@ -18,12 +18,12 @@ describe('RegistrationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RegistrationComponent ],
+      declarations: [RegistrationComponent],
       imports: [ReactiveFormsModule, RouterTestingModule, HttpClientModule],
-      providers: [{ provide: Router, useValue: RouterSpy}
+      providers: [{provide: Router, useValue: RouterSpy}
       ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -60,7 +60,7 @@ describe('RegistrationComponent', () => {
   });
 
   it('should return proper error message when validated for required field', () => {
-    component.registerForm.setValue({firstName: '', lastName: '', email: '', password: ''});
+    component.registerForm.setValue({firstName: '', lastName: '', email: '', password: '', confirmPassword: ''});
     expect(component.getErrorMessage(component.registerForm.get('firstName'))).toBe('You must enter a value');
     expect(component.getErrorMessage(component.registerForm.get('lastName'))).toBe('You must enter a value');
     expect(component.getErrorMessage(component.registerForm.get('email'))).toBe('You must enter a value');
@@ -68,31 +68,48 @@ describe('RegistrationComponent', () => {
   });
 
   it('should return proper error message for password pattern', () => {
-    component.registerForm.setValue({firstName: 'rayyan', lastName: 'Mahammad', email: 'abc@gmail.com', password: 'abcdefgh'});
-    expect(component.getErrorMessage(component.registerForm.get('password'))).toBe('Please enter password with ' +
-      '<br> 1) Minimum 8 characters ' +
-      '<br> 2) At least one capital letter ' +
-      '<br> 3) At least one small letter');
+    component.registerForm.setValue(
+      {firstName: 'rayyan', lastName: 'Mahammad', email: 'abc@gmail.com', password: 'abcdefgh', confirmPassword: ''}
+    );
+    expect(component.getErrorMessage(component.registerForm.get('password'))).toBe('Password should have Minimum 8 characters, one capital and small letter');
   });
 
   it('should return proper error message for password matches first name or last name', () => {
-    component.registerForm.setValue({firstName: 'rayyan', lastName: 'Mahammad', email: 'abc@gmail.com', password: 'abcdRayyanefgh'});
+    component.registerForm.setValue(
+      {firstName: 'rayyan', lastName: 'Mahammad', email: 'abc@gmail.com', password: 'abcdRayyanefgh', confirmPassword: ''});
     expect(component.getErrorMessage(component.registerForm.get('password'))).toBe('Password matches with your First Name or Last Name');
   });
 
   it('should return proper error message for non proper mail address', () => {
-    component.registerForm.setValue({firstName: 'rayyan', lastName: 'Mahammad', email: 'abc@gmail@com', password: 'abcdefgh'});
+    component.registerForm.setValue({
+      firstName: 'rayyan',
+      lastName: 'Mahammad',
+      email: 'abc@gmail@com',
+      password: 'abcdefgh',
+      confirmPassword: ''
+    });
     expect(component.getErrorMessage(component.registerForm.get('email'))).toBe('Not a valid email');
   });
 
   it('should return null if when checkedforValidity', () => {
-    component.registerForm.setValue({firstName: 'rayyan', lastName: 'Mahammad', email: 'abc@gmail@com', password: 'abcdefgh'});
+    component.registerForm.setValue(
+      {firstName: 'rayyan', lastName: 'Mahammad', email: 'abc@gmail@com', password: 'abcdefgh', confirmPassword: 'abcdefgh'}
+    );
     expect(component.checkPasswordValidity(component.registerForm)).toBe(null);
   });
 
+  it('should return not same error when password and confirm password donot match', () => {
+    component.registerForm.setValue(
+      {firstName: 'rayyan', lastName: 'Mahammad', email: 'abc@gmail@com', password: 'abcdefgh', confirmPassword: 'sdadadsd'}
+    );
+    expect(component.checkPasswordValidity(component.registerForm)).toEqual({notSame: true});
+  });
+
   it('should return isMatching error if when checkedforValidity', () => {
-    component.registerForm.setValue({firstName: 'rayyan', lastName: 'Mahammad', email: 'abc@gmail@com', password: 'abcdRayyanefgh'});
-    expect(component.checkPasswordValidity(component.registerForm)).toEqual({ isMatching: true });
+    component.registerForm.setValue(
+      {firstName: 'rayyan', lastName: 'Mahammad', email: 'abc@gmail@com', password: 'abcdRayyanefgh', confirmPassword: 'abcdefgh'}
+    );
+    expect(component.checkPasswordValidity(component.registerForm)).toEqual({isMatching: true});
   });
 
 });

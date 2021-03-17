@@ -1,18 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, FormGroupDirective, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {first} from 'rxjs/operators';
 import {UserService} from '../core/services/user.service';
-import {ErrorStateMatcher} from '@angular/material/core';
-
-export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    const invalidCtrl = !!(control?.invalid && control?.touched);
-    const invalidParent = !!(control?.parent?.invalid && control?.parent?.dirty && control?.parent?.hasError('isMatching'));
-
-    return invalidCtrl || invalidParent;
-  }
-}
+import {ConfirmPasswordStateMatcher, MyErrorStateMatcher} from '../core/services/error-validators';
 
 @Component({
   selector: 'app-registration',
@@ -21,11 +12,14 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 })
 export class RegistrationComponent implements OnInit {
   hide = true;
+  confirmHide = true;
+  confirmDisabled = true;
   registerForm: FormGroup;
   loading = false;
   submitted = false;
   dataError: string;
   matcher = new MyErrorStateMatcher();
+  confirmMatcher = new ConfirmPasswordStateMatcher();
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
@@ -52,7 +46,8 @@ export class RegistrationComponent implements OnInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', Validators.required],
-      password: ['', [Validators.required, Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d]{8,}$')]]
+      password: ['', [Validators.required, Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d]{8,}$')]],
+      confirmPassword: ['']
     }, {validators: this.checkPasswordValidity});
   }
 
@@ -65,9 +60,13 @@ export class RegistrationComponent implements OnInit {
     const validFirstName = registerFormGroup && registerFormGroup.get('firstName').valid && registerFormGroup.get('firstName').value;
     const validLastName = registerFormGroup && registerFormGroup.get('lastName').valid && registerFormGroup.get('lastName').value;
     const password = registerFormGroup && registerFormGroup.get('password').value;
+    const confirmPassword = registerFormGroup && registerFormGroup.get('confirmPassword').value;
+
     if ((validFirstName && password.toLowerCase().indexOf(validFirstName.toLowerCase()) > -1 ||
       validLastName && password.toLowerCase().indexOf(validLastName.toLowerCase()) > -1)) {
       return {isMatching: true};
+    } else if (password !== confirmPassword) {
+      return {notSame: true };
     }
     return null;
   }
@@ -85,7 +84,7 @@ export class RegistrationComponent implements OnInit {
     }
     this.userService.register(this.registerForm.value)
       .pipe(first())
-      .subscribe((data) => {
+      .subscribe(() => {
         alert('Form submitted successfully');
         formDirective.resetForm();
         this.registerForm.reset();
@@ -105,14 +104,13 @@ export class RegistrationComponent implements OnInit {
     if (registerFormControl.hasError('required')) {
       return 'You must enter a value';
     } else if (registerFormControl.hasError('pattern')) {
-      return 'Please enter password with ' +
-        '<br> 1) Minimum 8 characters ' +
-        '<br> 2) At least one capital letter ' +
-        '<br> 3) At least one small letter';
+      return 'Password should have Minimum 8 characters, one capital and small letter';
     } else if (registerFormControl.hasError('email')) {
       return 'Not a valid email';
     } else if (this.registerForm.hasError('isMatching')) {
       return 'Password matches with your First Name or Last Name';
+    } else if (this.registerForm.hasError('notSame')) {
+      return 'Password did not match with one another';
     }
   }
 

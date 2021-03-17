@@ -3,7 +3,7 @@
     <div fxLayoutAlign="center start">
       <h1>Sign Up</h1>
     </div>
-    <mat-progress-bar mode="indeterminate" class="progress-bar" *ngIf="loading"></mat-progress-bar>
+    <mat-progress-bar *ngIf="loading" class="progress-bar" mode="indeterminate"></mat-progress-bar>
     <div class="registration-form" fxLayout="column">
       <form #formDirective="ngForm" (ngSubmit)="onSubmit(formDirective)" [formGroup]="registerForm" fxLayout="column"
             fxLayoutGap="1rem">
@@ -11,23 +11,25 @@
           <mat-form-field appearance="outline">
             <mat-label>First Name</mat-label>
             <input formControlName="firstName" matInput placeholder="Please enter your First Name">
-            <mat-icon *ngIf="f.firstName.valid" class="icon--correct" matSuffix>check_circle</mat-icon>
-            <mat-icon *ngIf="f.firstName.touched && f.firstName.invalid" class="icon--wrong" matSuffix>cancel</mat-icon>
-            <mat-error *ngIf="f.firstName.errors">{{getErrorMessage(f.firstName)}}</mat-error>
+            <mat-icon *ngIf="f?.firstName?.valid" class="icon--correct" matSuffix>check_circle</mat-icon>
+            <mat-icon *ngIf="f?.firstName?.touched && f?.firstName?.invalid" class="icon--wrong" matSuffix>cancel
+            </mat-icon>
+            <mat-error *ngIf="f?.firstName?.errors">{{getErrorMessage(f?.firstName)}}</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Last Name</mat-label>
             <input formControlName="lastName" matInput placeholder="Please enter your Last Name">
-            <mat-icon *ngIf="f.lastName.valid" class="icon--correct" matSuffix>check_circle</mat-icon>
-            <mat-icon *ngIf="f.lastName.touched && f.lastName.invalid" class="icon--wrong" matSuffix>cancel</mat-icon>
-            <mat-error *ngIf="f.lastName.errors">{{getErrorMessage(f.lastName)}}</mat-error>
+            <mat-icon *ngIf="f?.lastName?.valid" class="icon--correct" matSuffix>check_circle</mat-icon>
+            <mat-icon *ngIf="f?.lastName?.touched && f?.lastName?.invalid" class="icon--wrong" matSuffix>cancel
+            </mat-icon>
+            <mat-error *ngIf="f?.lastName?.errors">{{getErrorMessage(f?.lastName)}}</mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Email</mat-label>
             <input email="true" formControlName="email" matInput placeholder="Please Enter Email">
-            <mat-icon *ngIf="f.email.valid" class="icon--correct" matSuffix>check_circle</mat-icon>
-            <mat-icon *ngIf="f.email.touched && f.email.invalid" class="icon--wrong" matSuffix>cancel</mat-icon>
-            <mat-error *ngIf="f.email.errors"><span [innerHTML]="getErrorMessage(f.email)"></span></mat-error>
+            <mat-icon *ngIf="f?.email?.valid" class="icon--correct" matSuffix>check_circle</mat-icon>
+            <mat-icon *ngIf="f?.email?.touched && f?.email?.invalid" class="icon--wrong" matSuffix>cancel</mat-icon>
+            <mat-error *ngIf="f?.email?.errors"><span [innerHTML]="getErrorMessage(f?.email)"></span></mat-error>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Password</mat-label>
@@ -38,15 +40,33 @@
                     matPrefix type="button">
               <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
-            <mat-icon *ngIf="f.password.valid" class="icon--correct" matSuffix>check_circle</mat-icon>
-            <mat-icon *ngIf="f.password.touched && f.password.invalid" class="icon--wrong" matSuffix>cancel</mat-icon>
-            <mat-error *ngIf="f.password.errors || registerForm?.hasError('isMatching')"><span
+            <mat-icon *ngIf="f?.password?.valid" class="icon--correct" matSuffix>check_circle</mat-icon>
+            <mat-icon *ngIf="f?.password?.touched && f?.password?.invalid" class="icon--wrong" matSuffix>cancel
+            </mat-icon>
+            <mat-error *ngIf="f?.password?.errors || registerForm?.hasError('isMatching')"><span
               [innerHTML]="getErrorMessage(f.password)"></span></mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Confirm Password</mat-label>
+            <input [errorStateMatcher]="confirmMatcher" [type]="confirmHide ? 'password' : 'text'"
+                   formControlName="confirmPassword" matInput placeholder="Please confirm Password">
+            <button (click)="confirmHide = !confirmHide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide"
+                    mat-icon-button
+                    matPrefix type="button">
+              <mat-icon>{{confirmHide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-icon *ngIf="f?.confirmPassword?.touched && !registerForm?.hasError('notSame')" class="icon--correct" matSuffix>check_circle</mat-icon>
+            <mat-icon *ngIf="f?.confirmPassword?.touched && f?.confirmPassword?.invalid" class="icon--wrong" matSuffix>cancel
+            </mat-icon>
+            <mat-error *ngIf="f?.confirmPassword?.errors || registerForm?.hasError('notSame')"><span
+              [innerHTML]="getErrorMessage(f.confirmPassword)"></span></mat-error>
           </mat-form-field>
         </div>
 
         <div fxLayoutAlign="end end">
-          <button [disabled]="loading || !(registerForm.valid)" class="register-button" mat-raised-button type="submit">
+          <button [disabled]="loading || !(registerForm?.valid)" class="register-button" mat-raised-button
+                  type="submit">
             Create Account
           </button>
         </div>
